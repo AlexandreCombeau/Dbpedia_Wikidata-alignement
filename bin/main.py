@@ -23,6 +23,7 @@ def main():
         sparql_query = re.sub(r"\n|'","",sparql_query)
         sparql_call(sparql_query, result_file)
         read_result_file(result_file)
+        #todo waiting routine
         #need wait command to process result file before calling new sparql query
         
     
