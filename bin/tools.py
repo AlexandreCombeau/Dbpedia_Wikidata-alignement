@@ -1,15 +1,10 @@
-
-import sys
-import ijson
-import re
-import math
+from typing import Tuple,Set,List
 from functools import reduce 
-import numpy as np
+import ijson
 import json
 import os
 
-
-def property_list_cutting(l: list ,slice_size: int ) -> list:
+def property_list_cutting(l: list ,slice_size: int ) -> List[List[str]]:
     """From a list, return slice 2D with n sublist of size "slice_size"
 
     Args:
@@ -42,7 +37,7 @@ def query_generate_VALUES(slice: list) -> str:
     return joined_string
 
 
-def read_sameAs_file(file: str) -> None:
+def read_sameAs_file(file: str) -> Tuple[Set[str],Set[str]]:
     """Generate a list of sameAs from Dbpedia and Wikidata, we keep track of how many lines we read 
 
     Args:
@@ -54,36 +49,35 @@ def read_sameAs_file(file: str) -> None:
     first = "DB"
     second = "WK"
 
-    DB_entity_list = set()
-    WK_entity_list = set()
+    db_entity_list = set()
+    wk_entity_list = set()
 
     for record in ijson.items(f_read, "results.bindings.item"):
-        DB_entity_list.add(f'<{record[first]["value"]}>')
-        WK_entity_list.add(f'<{record[second]["value"]}>')
+        db_entity_list.add(f'<{record[first]["value"]}>')
+        wk_entity_list.add(f'<{record[second]["value"]}>')
 
     f_read.close()
-    print(len(DB_entity_list))
-    print(len(WK_entity_list))
-    return DB_entity_list,WK_entity_list
+    return db_entity_list,wk_entity_list
 
 
 def read_result_file(file : str) -> None:
+    """Read a result file to fill a dictionary 
+
+    Args:
+        file (str): result file in json format
+    """
     
     f_read = open(file, 'r', encoding="UTF-8")
-
-    prop = "b"
-
-    properties_count_file = "property_support.json"
+    prop = "b" #name of the sparql var
+    properties_count_file = "property_support.json" #dict file name
     #if file exist open json file and load 
     if os.path.exists(properties_count_file):
         with open(properties_count_file) as json_file:
             property_dictionnary = json.load(json_file)
             
     #else start with empty dict
-
     else:
         property_dictionnary = {}
-
 
     for record in ijson.items(f_read, "results.bindings.item"):
         item = (f'<{record[prop]["value"]}>')
@@ -98,7 +92,7 @@ def read_result_file(file : str) -> None:
 
 
 
-def sparql_call(sparql_query: str, result_file : str) -> None :
+def sparql_call(sparql_query: str, result_file : str) -> int :
     """Call a jar file to execute a sparql query on a database for a specified query 
 
     Args:
@@ -109,5 +103,5 @@ def sparql_call(sparql_query: str, result_file : str) -> None :
     result_file_name = result_file
     result_file_path = "./RequestResults/"+result_file_name
     hdt_command = "nohup java -Xmx120G -Xms120G -jar "+jar_path+" "+dataset_path+" \""+sparql_query+"\" > "+result_file_path+" &"
-    os.system(hdt_command)
+    return os.system(hdt_command)
 
