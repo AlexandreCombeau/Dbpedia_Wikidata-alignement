@@ -60,7 +60,7 @@ def read_sameAs_file(file: str) -> Tuple[Set[str],Set[str]]:
     return db_entity_list,wk_entity_list
 
 
-def read_result_file(file : str) -> None:
+def read_result_file(file : str, output_file : str = "property_support.json") -> None:
     """Read a result file to fill a dictionary 
 
     Args:
@@ -69,7 +69,7 @@ def read_result_file(file : str) -> None:
     
     f_read = open(file, 'r', encoding="UTF-8")
     prop = "b" #name of the sparql var
-    properties_count_file = "property_support.json" #dict file name
+    properties_count_file = output_file #dict file name
     #if file exist open json file and load 
     if os.path.exists(properties_count_file):
         with open(properties_count_file) as json_file:
