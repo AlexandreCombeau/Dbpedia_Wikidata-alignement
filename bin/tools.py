@@ -60,7 +60,7 @@ def read_sameAs_file(file: str) -> Tuple[Set[str],Set[str]]:
     return db_entity_list,wk_entity_list
 
 
-def read_result_file(file : str, output_file : str = "property_support.json") -> None:
+def read_result_file(file : str, output_file : str) -> None:
     """Read a result file to fill a dictionary 
 
     Args:
@@ -98,10 +98,23 @@ def sparql_call(sparql_query: str, result_file : str) -> int :
     Args:
         sparql_query (str): sparql query we want to execute on a database
     """
-    jar_path = "../soulard/QueryHDT/SparqlToJSON.jar"
-    dataset_path = "../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt"
-    result_file_name = result_file
-    result_file_path = "./RequestResults/"+result_file_name
-    hdt_command = "nohup java -Xmx120G -Xms120G -jar "+jar_path+" "+dataset_path+" \""+sparql_query+"\" > "+result_file_path+" &"
+    jar_path = "~/../soulard/QueryHDT/SparqlToJSON.jar"
+    dataset_path = "~/../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt"
+    #hdt_command = "nohup java -Xmx120G -Xms120G -jar "+jar_path+" "+dataset_path+" \""+sparql_query+"\" > "+result_file+" &"
+    hdt_command = "java -jar "+jar_path+" "+dataset_path+" \""+sparql_query+"\" > "+result_file
     return os.system(hdt_command)
 
+def clean_nohup_file(result_file : str) -> None:
+    """Commands to remove unwanted string at the start of nohup resulting files
+
+    Args:
+        result_file (str): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    code = 0
+    new_res_file = result_file.split(".")[0]+"_clean.json"
+    code += os.system("cp "+result_file+" "+new_res_file)
+    code += os.system("awk 'NR > 3 { print }' < "+new_res_file+" > "+result_file) #remove first 3 lines of the file
+    return code
