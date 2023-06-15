@@ -3,7 +3,9 @@ import re
 from tools import *
 
 def main():
-    find_entity_for_specific_prop()
+    sameAs_file = sys.argv[1]
+    prop = sys.argv[2]
+    find_entity_for_specific_prop(sameAs_file, prop)
    
         
        
@@ -13,8 +15,8 @@ if __name__=="__main__":
     #print(clean_file("result_prop.json"))
     main()
 
-def find_entity_for_specific_prop(prop : str):
-    sameAs_file = sys.argv[1]
+def find_entity_for_specific_prop(sameAs_file : str, prop : str) -> None:
+    
     result_file = "../data/result_entity_that_support_p.json"
     name_of_prop = prop.split("/")[-1][0:-1]
     output_file = "../data/prop_"+name_of_prop+"_support_db.ttl"
@@ -38,7 +40,7 @@ def find_entity_for_specific_prop(prop : str):
     sparql_call(sparql_query, result_file)
     concat_result_files(result_file, output_file, var_names=["e","p","v"])
 
-def count_property_support():
+def count_property_support(sameAs_file : str) -> None:
     """
         Count the support for every property supported by entity that have a sameAs link
     """
