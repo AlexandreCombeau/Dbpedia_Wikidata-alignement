@@ -2,19 +2,6 @@ import sys
 import re 
 from tools import *
 
-def main():
-    sameAs_file = sys.argv[1]
-    prop = sys.argv[2]
-    find_entity_for_specific_prop(sameAs_file, prop)
-   
-        
-       
-   
-    
-if __name__=="__main__":
-    #print(clean_file("result_prop.json"))
-    main()
-
 def find_entity_for_specific_prop(sameAs_file : str, prop : str) -> None:
     
     result_file = "../data/result_entity_that_support_p.json"
@@ -68,4 +55,15 @@ def count_property_support(sameAs_file : str) -> None:
     sparql_call(sparql_query, result_file)
 
     read_result_file(result_file, dict_output_file, prop_var_name="b")
+  
+def main():
+    sameAs_file = sys.argv[1]
+    prop = sys.argv[2]
+    find_entity_for_specific_prop(sameAs_file, prop)
+     
     
+if __name__=="__main__":
+    #print(clean_file("result_prop.json"))
+    main()
+
+  
