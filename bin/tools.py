@@ -36,7 +36,6 @@ def query_generate_VALUES(slice: list) -> str:
     joined_string = reduce(func, slice, acc)
     return joined_string
 
-
 def read_sameAs_file(file: str) -> Tuple[Set[str],Set[str]]:
     """Generate a list of sameAs from Dbpedia and Wikidata, we keep track of how many lines we read 
 
@@ -59,8 +58,7 @@ def read_sameAs_file(file: str) -> Tuple[Set[str],Set[str]]:
     f_read.close()
     return db_entity_list,wk_entity_list
 
-
-def read_result_file(file : str, output_file : str) -> None:
+def read_result_file(file : str, output_file : str, prop_var_name : str) -> None:
     """Read a result file to fill a dictionary 
 
     Args:
@@ -68,7 +66,7 @@ def read_result_file(file : str, output_file : str) -> None:
     """
     
     f_read = open(file, 'r', encoding="UTF-8")
-    prop = "b" #name of the sparql var
+    prop = prop_var_name #name of the sparql var
     properties_count_file = output_file #dict file name
     #if file exist open json file and load 
     if os.path.exists(properties_count_file):
@@ -89,8 +87,6 @@ def read_result_file(file : str, output_file : str) -> None:
     #dump new dict
     with open(properties_count_file, "w") as fp:
         json.dump(property_dictionnary,fp) 
-
-
 
 def sparql_call(sparql_query: str, result_file : str) -> int :
     """Call a jar file to execute a sparql query on a database for a specified query 
@@ -118,3 +114,26 @@ def clean_nohup_file(result_file : str) -> None:
     code += os.system("cp "+result_file+" "+new_res_file)
     code += os.system("awk 'NR > 3 { print }' < "+new_res_file+" > "+result_file) #remove first 3 lines of the file
     return code
+
+def concat_result_files(result_file : str, output_file : str, var_names : list) -> None:
+    """Concat the json file to the output file
+
+    Args:
+        result_file (str): json file 
+        output_file (str): ttl format file, append at the end of file
+    """
+    
+    e,p,v = var_names
+    f_read = open(result_file, 'r', encoding="UTF-8")
+    f_write = open(output_file, 'w', encoding="UTF-8")
+    for record in ijson.items(f_read, "results.bindings.item"):
+        entity = (f'<{record[e]["value"]}>')
+        prop = (f'<{record[p]["value"]}>')
+        value = (f'<{record[v]["value"]}>')
+        f_write.write(entity+"\t"+prop+"\t"+value+"\n")
+        
+    f_read.close()
+    f_write.close()
+
+
+

@@ -1,3 +1,4 @@
 # Ignorer tous les fichiers .json
+*.json
 dbpedia_sameAs_clean.json
 result_prop.json
