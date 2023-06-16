@@ -15,3 +15,5 @@ Exemple de commandes qui marchent
 Pour convertir le resultat json en fichier .nt 
      python3 ../soulard/QueryHDT/From_JSON_to_NT_V3.py RequestResults/results.json ./RequestResults/_tmp.nt
 
+Pour recuperer les données dans le dossier courrant
+    scp -r serv:~/Dbpedia_Wikidata-alignement/data/prop_releaseDate_support_db.ttl .

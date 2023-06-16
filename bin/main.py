@@ -2,7 +2,7 @@ import sys
 import re 
 from tools import *
 
-def find_entity_for_specific_prop(sameAs_file : str, prop : str) -> None:
+def find_entity_for_specific_prop(sameAs_file : str, prop : str, database_name : str) -> None:
     
     result_file = "../data/result_entity_that_support_p.json"
     name_of_prop = prop.split("/")[-1][0:-1]
@@ -23,18 +23,18 @@ def find_entity_for_specific_prop(sameAs_file : str, prop : str) -> None:
             ?e ?p ?v.
             }  
             """
-    sparql_query = re.sub(r"\n|'","",sparql_query)
-    sparql_call(sparql_query, result_file)
-    concat_result_files(result_file, output_file, var_names=["e","p","v"])
+        sparql_query = re.sub(r"\n|'","",sparql_query)
+        sparql_call(sparql_query, result_file, database_name)
+        concat_result_files(result_file, output_file, var_names=["e","p","v"])
 
-def count_property_support(sameAs_file : str) -> None:
+def count_property_support(sameAs_file : str, database_name : str) -> None:
     """
         Count the support for every property supported by entity that have a sameAs link
     """
     sameAs_file = sys.argv[1]
     result_file = "../data/result_prop.json"
     dict_output_file = "../data/property_support.json"
-    slice_size = 500 #number of values in the VALUES keyword in sparql
+    slice_size = 2000 #number of values in the VALUES keyword in sparql
 
     db_entity_list, _ = list(map(list,read_sameAs_file(sameAs_file))) #convert the sets back to maps
     
@@ -50,16 +50,17 @@ def count_property_support(sameAs_file : str) -> None:
             ?a ?b ?_.
             }  
             """
-    sparql_query = re.sub(r"\n|'","",sparql_query)
-    
-    sparql_call(sparql_query, result_file)
+        sparql_query = re.sub(r"\n|'","",sparql_query)
+        
+        sparql_call(sparql_query, result_file, database_name)
 
-    read_result_file(result_file, dict_output_file, prop_var_name="b")
-  
+        read_result_file(result_file, dict_output_file, prop_var_name="b")
+    
 def main():
     sameAs_file = sys.argv[1]
     prop = sys.argv[2]
-    find_entity_for_specific_prop(sameAs_file, prop)
+    database_name = sys.argv[3]
+    find_entity_for_specific_prop(sameAs_file, prop, database_name)
      
     
 if __name__=="__main__":

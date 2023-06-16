@@ -88,14 +88,18 @@ def read_result_file(file : str, output_file : str, prop_var_name : str) -> None
     with open(properties_count_file, "w") as fp:
         json.dump(property_dictionnary,fp) 
 
-def sparql_call(sparql_query: str, result_file : str) -> int :
+def sparql_call(sparql_query: str, result_file : str, database_name : str = "dbpedia") -> int :
     """Call a jar file to execute a sparql query on a database for a specified query 
 
     Args:
         sparql_query (str): sparql query we want to execute on a database
     """
     jar_path = "~/../soulard/QueryHDT/SparqlToJSON.jar"
-    dataset_path = "~/../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt"
+    database_path = {
+        "dbpedia" : "~/../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
+        "wikidata" : "~/../soulard/Graphs_HDT/Wikidata/Wikidata_final.hdt" 
+    }
+    dataset_path = database_path[database_name]
     #hdt_command = "nohup java -Xmx120G -Xms120G -jar "+jar_path+" "+dataset_path+" \""+sparql_query+"\" > "+result_file+" &"
     hdt_command = "java -jar "+jar_path+" "+dataset_path+" \""+sparql_query+"\" > "+result_file
     return os.system(hdt_command)
@@ -125,11 +129,11 @@ def concat_result_files(result_file : str, output_file : str, var_names : list) 
     
     e,p,v = var_names
     f_read = open(result_file, 'r', encoding="UTF-8")
-    f_write = open(output_file, 'w', encoding="UTF-8")
+    f_write = open(output_file, 'a', encoding="UTF-8")
     for record in ijson.items(f_read, "results.bindings.item"):
         entity = (f'<{record[e]["value"]}>')
         prop = (f'<{record[p]["value"]}>')
-        value = (f'<{record[v]["value"]}>')
+        value = (f'{record[v]["value"]}')
         f_write.write(entity+"\t"+prop+"\t"+value+"\n")
         
     f_read.close()
