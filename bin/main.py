@@ -7,10 +7,12 @@ def find_entity_for_specific_prop(sameAs_file : str, prop : str, database_name :
     result_file = "../data/result_entity_that_support_p.json"
     name_of_prop = prop.split("/")[-1][0:-1]
     output_file = "../data/prop_"+name_of_prop+"_support_db.ttl"
-    slice_size = 500 #number of values in the VALUES keyword in sparql
-    db_entity_list, _ = list(map(list,read_sameAs_file(sameAs_file))) #convert the sets back to maps
-    
-    sliced = property_list_cutting(db_entity_list,slice_size) #cut the big list into slice in a 2D list
+    slice_size = 2000 #number of values in the VALUES keyword in sparql
+    db_entity_list, wk_entity_list = list(map(list,read_sameAs_file(sameAs_file))) #convert the sets back to maps
+    if database_name == "dbpedia":
+        sliced = property_list_cutting(db_entity_list,slice_size) #cut the big list into slice in a 2D list
+    if database_name == "wikidata":
+        sliced = property_list_cutting(wk_entity_list,slice_size) #cut the big list into slice in a 2D list
     query_values_strings = [] #list of string properties used for VALUES in the sparql query
     for i in sliced:
         query_values_strings.append(query_generate_VALUES(i)) #join all prop in each bucket in a single string
@@ -31,10 +33,9 @@ def count_property_support(sameAs_file : str, database_name : str) -> None:
     """
         Count the support for every property supported by entity that have a sameAs link
     """
-    sameAs_file = sys.argv[1]
     result_file = "../data/result_prop.json"
     dict_output_file = "../data/property_support.json"
-    slice_size = 2000 #number of values in the VALUES keyword in sparql
+    slice_size = 1000 #number of values in the VALUES keyword in sparql
 
     db_entity_list, _ = list(map(list,read_sameAs_file(sameAs_file))) #convert the sets back to maps
     
