@@ -56,13 +56,48 @@ def count_property_support(sameAs_file : str, database_name : str) -> None:
         sparql_call(sparql_query, result_file, database_name)
 
         read_result_file(result_file, dict_output_file, prop_var_name="b")
+
+def find_entity_for_specific_prop_hdt_version(sameAs_file : str, query_service : str, prop : str, database_name : str) -> None:
     
+    name_of_prop = prop.split("/")[-1][0:-1]
+    output_file = "../data/prop_"+name_of_prop+"_support_db.json"
+    database_path = {
+    "dbpedia" : "~/../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
+    "wikidata" : "~/../soulard/Graphs_HDT/Wikidata/Wikidata_final.hdt" 
+    }
+    db_entity_list, wk_entity_list = list(map(list,read_sameAs_file(sameAs_file))) #convert the sets back to maps
+    if database_name == "dbpedia":
+        entities = query_generate_VALUES(db_entity_list) #cut the big list into slice in a 2D list
+    if database_name == "wikidata":
+        entities = query_generate_VALUES(wk_entity_list) #cut the big list into slice in a 2D list
+
+
+    sparql_query = """select distinct ?e ?p ?v  where {
+        values ?e { """+entities+""" }.
+        bind("""+prop+""" as ?p)
+        ?e ?p ?v.
+        }  
+        """        
+    sparql_query = re.sub(r"\n|'","",sparql_query)
+    query_file = name_of_prop+"_query"
+    with open(query_file,"w",encoding="utf-8") as f:
+        f.write(sparql_query)
+
+    #call with sparql to get all entities for a specific property
+    hdt_query_command = "java -jar "+query_service+" "+database_path+" "+query_file+" "+output_file
+    os.system(hdt_query_command)
+    print("##############################")
+    print("#############DONE#############")
+    print("#############DONE#############")
+    print("#############DONE#############")
+    print("##############################")
+
 def main():
     sameAs_file = sys.argv[1]
     prop = sys.argv[2]
     database_name = sys.argv[3]
-    find_entity_for_specific_prop(sameAs_file, prop, database_name)
-     
+    query_service = sys.argv[4]
+    find_entity_for_specific_prop_hdt_version(sameAs_file, query_service, prop, database_name) 
     
 if __name__=="__main__":
     #print(clean_file("result_prop.json"))

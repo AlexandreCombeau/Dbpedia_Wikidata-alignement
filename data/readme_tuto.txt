@@ -17,3 +17,13 @@ Pour convertir le resultat json en fichier .nt
 
 Pour recuperer les données dans le dossier courrant
     scp -r serv:~/Dbpedia_Wikidata-alignement/data/prop_releaseDate_support_db.ttl .
+
+Pour refresh depot git
+    git fetch origin master
+    git reset --hard FETCH_HEAD
+    git clean -df
+
+Commande :
+python3 main.py ../data/dbpedia_sameAs_clean.json "<http://dbpedia.org/ontology/releaseDate>" "dbpedia"
+python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata"
+python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata" ~soulard/QueryHDT/SparqlHomemade2.jar
