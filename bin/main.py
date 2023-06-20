@@ -84,7 +84,7 @@ def find_entity_for_specific_prop_hdt_version(sameAs_file : str, query_service :
         f.write(sparql_query)
 
     #call with sparql to get all entities for a specific property
-    hdt_query_command = "java -jar "+query_service+" "+database_path+" "+query_file+" "+output_file
+    hdt_query_command = "java -Xmx50G -Xms50G -jar "+query_service+" "+database_path+" "+query_file+" "+output_file
     os.system(hdt_query_command)
     print("##############################")
     print("#############DONE#############")
