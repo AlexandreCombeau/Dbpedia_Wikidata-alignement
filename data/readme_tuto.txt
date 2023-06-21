@@ -27,3 +27,4 @@ Commande :
 python3 main.py ../data/dbpedia_sameAs_clean.json "<http://dbpedia.org/ontology/releaseDate>" "dbpedia"
 python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata"
 python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata" ~soulard/QueryHDT/SparqlHomemade2.jar
+python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata" ~soulard/QueryHDT/SparqlHomemade2.jar
