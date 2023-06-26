@@ -104,11 +104,10 @@ def get_sameAs_for_pop_hdt_version(ttl_file : str, query_service : str, prop : s
     entity,_,_ = list(map(list,read_ttl_file(ttl_file))) #convert the sets back to maps
     entities = query_generate_VALUES(entity) #cut the big list into slice in a 2D list
    
-    sparql_query = """select distinct ?e ?p ?v  where {
+    sparql_query = """select distinct ?e ?v  where {
         values ?e { """+entities+""" }.
-        bind("""+prop+""" as ?p)
-        ?e ?p ?v.
-        FILTER(strstarts(str(?obj), 'http://www.wikidata.'))
+        ?e owl:sameAs ?v.
+        FILTER(strstarts(str(?v), 'http://www.wikidata.'))
         }  
         """ 
     sparql_query = re.sub(r"\n|'","",sparql_query)
