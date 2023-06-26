@@ -36,15 +36,14 @@ def query_generate_VALUES(slice: list) -> str:
     joined_string = reduce(func, slice, acc)
     return joined_string
 
-def read_sameAs_file(file: str) -> tuple[set[str],set[str]]:
+def read_sameAs_file(file: str, var_names : list[str] = ["DB","WK"]) -> tuple[set[str],set[str]]:
     """Generate a list of sameAs from Dbpedia and Wikidata
     Args:
         file (str): sameAs json file name
     """
     f_read = open(file, 'r', encoding="UTF-8")
 
-    first = "DB"
-    second = "WK"
+    first,second = var_name#refactor with var name header from json file
 
     db_entity_list = set()
     wk_entity_list = set()

@@ -92,7 +92,6 @@ def find_entity_for_specific_prop_hdt_version(sameAs_file : str, query_service :
     print("#############DONE#############")
     print("##############################")
 
-
 def get_sameAs_for_pop_hdt_version(ttl_file : str, query_service : str, prop : str, database_name : str) -> None:
     
     name_of_prop = prop.split("/")[-1][0:-1]
@@ -127,12 +126,49 @@ def get_sameAs_for_pop_hdt_version(ttl_file : str, query_service : str, prop : s
     print("##############################")
 
 
+
+def find_entity_for_specific_prop_hdt_version(sameAs_file : str, query_service : str, prop : str, database_name : str) -> None:
+    
+    name_of_prop = prop.split("/")[-1][0:-1]
+    output_file = "../data/prop_"+name_of_prop+"_support_db.json"
+    database_path = {
+    "dbpedia" : "~/../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
+    "wikidata" : "~/../soulard/Graphs_HDT/Wikidata/Wikidata_final.hdt" 
+    }
+    db_entity_list, wk_entity_list = list(map(list,read_sameAs_file(sameAs_file))) #convert the sets back to maps
+    if database_name == "dbpedia":
+        entities = query_generate_VALUES(db_entity_list) #cut the big list into slice in a 2D list
+    if database_name == "wikidata":
+        entities = query_generate_VALUES(wk_entity_list) #cut the big list into slice in a 2D list
+
+
+    sparql_query = """select distinct ?e ?p ?v  where {
+        values ?e { """+entities+""" }.
+        bind("""+prop+""" as ?p)
+        ?e ?p ?v.
+        }  
+        """        
+    sparql_query = re.sub(r"\n|'","",sparql_query)
+    query_file = name_of_prop+"_query"
+    with open(query_file,"w",encoding="utf-8") as f:
+        f.write(sparql_query)
+
+    #call with sparql to get all entities for a specific property
+    hdt_query_command = "java -Xmx50G -Xms50G -jar "+query_service+" "+database_path+" "+query_file+" "+output_file
+    os.system(hdt_query_command)
+    print("##############################")
+    print("#############DONE#############")
+    print("#############DONE#############")
+    print("#############DONE#############")
+    print("##############################")
+
+
 def main():
     sameAs_file = sys.argv[1]
     prop = sys.argv[2]
     database_name = sys.argv[3]
     query_service = sys.argv[4]
-    get_sameAs_for_pop_hdt_version(sameAs_file, query_service, prop, database_name)
+    #get_sameAs_for_pop_hdt_version(sameAs_file, query_service, prop, database_name)
     #find_entity_for_specific_prop_hdt_version(sameAs_file, query_service, prop, database_name) 
     
 if __name__=="__main__":
