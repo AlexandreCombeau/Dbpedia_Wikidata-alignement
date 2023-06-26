@@ -69,7 +69,7 @@ def read_ttl_file(file: str) -> tuple[list[str],list[str],list[str]]:
     value = []
 
     for line in f_read.split("\n"):
-        e,p,v = line.append()
+        e,p,v = line.split("\t")
         entity.append(e)
         prop.append(p)
         value.append(v)
