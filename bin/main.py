@@ -105,7 +105,7 @@ def get_sameAs_for_pop_hdt_version(ttl_file : str, query_service : str, prop : s
     entities = query_generate_VALUES(entity) #cut the big list into slice in a 2D list
    
     sparql_query = """select distinct ?e ?v  where {
-        values ?e { """+entities+""" }.
+        values ?e { """+entities+""" }. 
         ?e owl:sameAs ?v.
         FILTER(strstarts(str(?v), 'http://www.wikidata.'))
         }  
@@ -116,7 +116,7 @@ def get_sameAs_for_pop_hdt_version(ttl_file : str, query_service : str, prop : s
         f.write(sparql_query)
 
     #call with sparql to get all entities for a specific property
-    hdt_query_command = "java -Xmx50G -Xms50G -jar "+query_service+" "+database_path+" "+query_file+" "+output_file
+    hdt_query_command = "java -Xmx50G -Xms50G -jar "+query_service+" "+database_path[database_name]+" "+query_file+" "+output_file
     os.system(hdt_query_command)
     print("##############################")
     print("#############DONE#############")
