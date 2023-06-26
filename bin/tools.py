@@ -1,10 +1,10 @@
-from typing import Tuple,Set,List
+import typing
 from functools import reduce 
 import ijson
 import json
 import os
 
-def property_list_cutting(l: list ,slice_size: int ) -> List[List[str]]:
+def property_list_cutting(l: list ,slice_size: int ) -> list[list[str]]:
     """From a list, return slice 2D with n sublist of size "slice_size"
 
     Args:
@@ -36,12 +36,10 @@ def query_generate_VALUES(slice: list) -> str:
     joined_string = reduce(func, slice, acc)
     return joined_string
 
-def read_sameAs_file(file: str) -> Tuple[Set[str],Set[str]]:
-    """Generate a list of sameAs from Dbpedia and Wikidata, we keep track of how many lines we read 
-
+def read_sameAs_file(file: str) -> tuple[set[str],set[str]]:
+    """Generate a list of sameAs from Dbpedia and Wikidata
     Args:
         file (str): sameAs json file name
-        nb_lines (int): number of lines we want to read
     """
     f_read = open(file, 'r', encoding="UTF-8")
 
@@ -57,6 +55,27 @@ def read_sameAs_file(file: str) -> Tuple[Set[str],Set[str]]:
 
     f_read.close()
     return db_entity_list,wk_entity_list
+
+
+def read_ttl_file(file: str) -> tuple[list[str],list[str],list[str]]:
+    """Generate a list entity property value from a ttl file
+    Args:
+        file (str): sameAs json file name
+    """
+    f_read = open(file, 'r', encoding="UTF-8").read()
+
+    entity = []
+    prop = []
+    value = []
+
+    for line in f_read.split("\n"):
+        e,p,v = line.append()
+        entity.append(e)
+        prop.append(p)
+        value.append(v)
+        
+    return entity,prop,value
+
 
 def read_result_file(file : str, output_file : str, prop_var_name : str) -> None:
     """Read a result file to fill a dictionary 
