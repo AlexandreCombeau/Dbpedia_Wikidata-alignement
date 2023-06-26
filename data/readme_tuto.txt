@@ -8,7 +8,8 @@ With Query
     java -jar ./sharewithserver/QueryHDT/SparqlToJSON.jar ./FILE.hdt "SELECT ?DB ?WK WHERE {{?DB sameAs ?WK. FILTER(strstarts(str(?WK), 'http://www.wikidata.'))} UNION {?WK sameAs ?DB. FILTER(strstarts(str(?WK), 'http://www.wikidata.'))}}" > ./OUTPUT &
 
 Exemple de commandes qui marchent
-    nohup java -Xmx120G -Xms120G -jar ../soulard/QueryHDT/SparqlToJSON.jar ../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt "PREFIX owl: <http://www.w3.org/2002/07/owl#> SELECT ?DB ?WK WHERE { {?DB owl:sameAs ?WK. FILTER(strstarts(str(?WK), 'http://www.wikidata.'))} UNION {?WK owl:sameAs ?DB. FILTER(strstarts(str(?WK), 'http://www.wikidata.'))}} limit 10" > ./RequestResults/results2.json &
+    nohup java -Xmx120G -Xms120G -jar ../soulard/QueryHDT/SparqlToJSON.jar ../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt 
+        "PREFIX owl: <http://www.w3.org/2002/07/owl#> SELECT ?DB ?WK WHERE { {?DB owl:sameAs ?WK. FILTER(strstarts(str(?WK), 'http://www.wikidata.'))} UNION {?WK owl:sameAs ?DB. FILTER(strstarts(str(?WK), 'http://www.wikidata.'))}} limit 10" > ./RequestResults/results2.json &
 
     java -jar ../soulard/QueryHDT/SparqlToJSON.jar ../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt "select ?a ?b ?c where { ?a ?b ?c } limit 10" > ./RequestResults/results.json
 
