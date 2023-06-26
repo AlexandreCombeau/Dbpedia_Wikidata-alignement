@@ -29,3 +29,5 @@ python3 main.py ../data/dbpedia_sameAs_clean.json "<http://dbpedia.org/ontology/
 python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata"
 python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata" ~soulard/QueryHDT/SparqlHomemade2.jar
 python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata" ~soulard/QueryHDT/SparqlHomemade2.jar
+python3 main.py ../data/prop_.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata" ~soulard/QueryHDT/SparqlHomemade2.jar
+python3 main.py ../data/prop_releaseDate_support_db.ttl "<http://www.wikidata.org/prop/statement/P10673>" "dbpedia" ~soulard/QueryHDT/SparqlHomemade2.jar &
