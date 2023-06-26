@@ -112,7 +112,7 @@ def get_sameAs_for_pop_hdt_version(ttl_file : str, query_service : str, prop : s
         FILTER(strstarts(str(?v), 'http://www.wikidata.'))
         }  
         """ 
-    sparql_query = re.sub(r"\n|'","",sparql_query)
+    #sparql_query = re.sub(r"\n|'","",sparql_query)
     query_file = name_of_prop+"_query"
     with open(query_file,"w",encoding="utf-8") as f:
         f.write(sparql_query)
