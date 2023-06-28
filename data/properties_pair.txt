@@ -1,0 +1,1 @@
+<http://dbpedia.org/ontology/releaseDate> <http://www.wikidata.org/prop/P10673>
