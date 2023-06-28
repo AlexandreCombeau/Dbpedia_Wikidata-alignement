@@ -35,7 +35,7 @@ def read_json_file(file: str) -> list[tuple[set[str], set[str]]]:
 
     with open(file, 'r', encoding="UTF-8") as f:
         for record in ijson.items(f, "results.bindings.item"):
-            for i in range(vars):
+            for i in range(len(vars)):
                 values[i].add(f'<{record[vars[i]]["value"]}>')
 
     return values
@@ -64,7 +64,7 @@ def parse_properties_file(properties_pair_file: str) -> str:
     db_wk_pairs = []
     with open(properties_pair_file, "r", encoding="utf-8") as f:
         for line in f.readlines():
-            if (splited := line.split(" ") == 2):
+            if len(splited := line.split(" ")) == 2:
                 db_wk_pairs.append((splited[0], splited[1]))
 
     return db_wk_pairs
