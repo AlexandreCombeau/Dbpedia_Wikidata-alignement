@@ -163,7 +163,27 @@ def find_entity_for_specific_prop_hdt_version(sameAs_file : str, query_service :
     print("##############################")
 
 
+def get_dataset(properties_pair_file : str, query_service : str) -> None:
+
+    #parse file and get pair of properties
+    tuples_properties = parse_properties_file(properties_pair_file)
+
+    for db_prop,wk_prop in tuples_properties:
+        #get dbpedia e-v for this property
+        db_prop_name = get_prop_name(db_prop)
+        wk_prop_name = get_prop_name(wk_prop)
+        os.system("mkdir ../data/"+wk_prop_name+"-"+wk_prop_name)
+        db_support_file = get_support(db_prop,"dbpedia",file_path)
+        db_wk_sameAs    = get_sameAs(wk_prop,db_support_file,"wikidata",file_path)
+        wk_support_file = get_support(wk_prop,wk_entities,"wikidata",file_path)
+
+    
 def main():
+
+    
+
+
+
     sameAs_file = sys.argv[1]
     prop = sys.argv[2]
     database_name = sys.argv[3]

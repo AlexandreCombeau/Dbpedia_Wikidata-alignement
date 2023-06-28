@@ -4,36 +4,19 @@ import ijson
 import json
 import os
 
-def property_list_cutting(l: list ,slice_size: int ) -> list[list[str]]:
-    """From a list, return slice 2D with n sublist of size "slice_size"
+QUERY_SERVICE = "~soulard/QueryHDT/SparqlHomemade2.jar"
+DATABASE_PATH = {
+    "dbpedia"  : "~/soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
+    "wikidata" : "~/soulard/Graphs_HDT/Wikidata/Wikidata_final.hdt" 
+}
 
-    Args:
-        l (_type_): huge 1D list
-        slice_size (_type_): 2D list composed of n "slice_size" list
-
-    Returns:
-        list : slice_size
-    """
-    index = 0
-    sliced_list = []
-    if len(l) < slice_size: return l
-    while index<len(l):
-        sliced_list.append(l[index:index+slice_size])
-        index+=slice_size
-    return sliced_list
-
-def query_generate_VALUES(slice: list) -> str:
+def query_generate_VALUES(lst: list) -> str:
     """From a list return a string composed of all element of the list joined
 
-    Args:
-        slice (list): 1D list
-
     Returns:
-        str : return a string of the type " slice[0] slice[1] slice[2] ... "
+        str : return a string of the type "list[1] list[2] ... list[n]"
     """
-    func = lambda acc,x : acc+" "+str(x)
-    acc = ""
-    joined_string = reduce(func, slice, acc)
+    joined_string = reduce(lambda acc,x : acc+" "+str(x), lst, "")
     return joined_string
 
 #TODO
