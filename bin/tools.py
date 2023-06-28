@@ -1,164 +1,130 @@
-import typing
-from functools import reduce 
-import ijson
 import json
 import os
+import typing
+from functools import reduce
 
-def property_list_cutting(l: list ,slice_size: int ) -> list[list[str]]:
-    """From a list, return slice 2D with n sublist of size "slice_size"
+import ijson
 
-    Args:
-        l (_type_): huge 1D list
-        slice_size (_type_): 2D list composed of n "slice_size" list
+QUERY_SERVICE = "~soulard/QueryHDT/SparqlHomemade2.jar"
+DATABASE_PATH = {
+    "dbpedia": "~/soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
+    "wikidata": "~/soulard/Graphs_HDT/Wikidata/Wikidata_final.hdt"
+}
 
-    Returns:
-        list : slice_size
-    """
-    index = 0
-    sliced_list = []
-    if len(l) < slice_size: return l
-    while index<len(l):
-        sliced_list.append(l[index:index+slice_size])
-        index+=slice_size
-    return sliced_list
 
-def query_generate_VALUES(slice: list) -> str:
+def list_toStr(lst: list) -> str:
     """From a list return a string composed of all element of the list joined
 
-    Args:
-        slice (list): 1D list
-
     Returns:
-        str : return a string of the type " slice[0] slice[1] slice[2] ... "
+        str : return a string of the type "list[1] list[2] ... list[n]"
     """
-    func = lambda acc,x : acc+" "+str(x)
-    acc = ""
-    joined_string = reduce(func, slice, acc)
+    joined_string = reduce(lambda acc, x: acc+" "+str(x), lst, "")
     return joined_string
 
-#TODO
-def read_sameAs_file(file: str, var_names : list[str] = ["DB","WK"]) -> tuple[set[str],set[str]]:
-    """Generate a list of sameAs from Dbpedia and Wikidata
+
+def read_json_file(file: str) -> list[tuple[set[str], set[str]]]:
+    """Return a set of each variable in the json file
     Args:
-        file (str): sameAs json file name
+        file (str): json file path
     """
-    f_read = open(file, 'r', encoding="UTF-8")
+    with open(file, 'r', encoding="UTF-8") as f:
+        vars = [record for record in ijson.items(f, "head.vars")][0]
 
-    first,second = var_names#refactor with var name header from json file
+    # create a dict for each variable in our json file
+    values = [set() for _ in range(len(vars))]
 
-    db_entity_list = set()
-    wk_entity_list = set()
+    with open(file, 'r', encoding="UTF-8") as f:
+        for record in ijson.items(f, "results.bindings.item"):
+            for i in range(vars):
+                values[i].add(f'<{record[vars[i]]["value"]}>')
 
-    for record in ijson.items(f_read, "results.bindings.item"):
-        db_entity_list.add(f'<{record[first]["value"]}>')
-        wk_entity_list.add(f'<{record[second]["value"]}>')
-
-    f_read.close()
-    return db_entity_list,wk_entity_list
-
-
-def read_ttl_file(file: str) -> tuple[list[str],list[str],list[str]]:
-    """Generate a list entity property value from a ttl file
-    Args:
-        file (str): sameAs json file name
-    """
-    f_read = open(file, 'r', encoding="UTF-8").read()
-
-    entity = []
-    prop = []
-    value = []
-
-    for line in f_read.split("\n"):
-        _line = line.split("\t")
-        if len(_line) == 3:
-            e,p,v = _line
-            entity.append(e)
-            prop.append(p)
-            value.append(v)
-        
-    return entity,prop,value
+    return values
 
 
-def read_result_file(file : str, output_file : str, prop_var_name : str) -> None:
-    """Read a result file to fill a dictionary 
-
-    Args:
-        file (str): result file in json format
-    """
-    
-    f_read = open(file, 'r', encoding="UTF-8")
-    prop = prop_var_name #name of the sparql var
-    properties_count_file = output_file #dict file name
-    #if file exist open json file and load 
-    if os.path.exists(properties_count_file):
-        with open(properties_count_file) as json_file:
-            property_dictionnary = json.load(json_file)
-            
-    #else start with empty dict
-    else:
-        property_dictionnary = {}
-
-    for record in ijson.items(f_read, "results.bindings.item"):
-        item = (f'<{record[prop]["value"]}>')
-        prop_count = property_dictionnary.get(item)
-        if prop_count: property_dictionnary[item] += 1
-        else: property_dictionnary[item] = 1
-
-    f_read.close()
-    #dump new dict
-    with open(properties_count_file, "w") as fp:
-        json.dump(property_dictionnary,fp) 
-
-def sparql_call(sparql_query: str, result_file : str, database_name : str = "dbpedia") -> int :
+def sparql_call(database: str, query_file: str, output_file: str) -> int:
     """Call a jar file to execute a sparql query on a database for a specified query 
-
     Args:
         sparql_query (str): sparql query we want to execute on a database
     """
-    jar_path = "~/../soulard/QueryHDT/SparqlToJSON.jar"
-    database_path = {
-        "dbpedia" : "~/../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
-        "wikidata" : "~/../soulard/Graphs_HDT/Wikidata/Wikidata_final.hdt" 
-    }
-    dataset_path = database_path[database_name]
-    #hdt_command = "nohup java -Xmx120G -Xms120G -jar "+jar_path+" "+dataset_path+" \""+sparql_query+"\" > "+result_file+" &"
-    hdt_command = "java -jar "+jar_path+" "+dataset_path+" \""+sparql_query+"\" > "+result_file
-    return os.system(hdt_command)
+    #jar_path = "~/../soulard/QueryHDT/SparqlToJSON.jar"
 
-def clean_nohup_file(result_file : str) -> None:
-    """Commands to remove unwanted string at the start of nohup resulting files
+    # call with sparql to get all entities for a specific property
+    hdt_query_command = "java -Xmx50G -Xms50G -jar "+QUERY_SERVICE + \
+        " "+DATABASE_PATH[database]+" "+query_file+" "+output_file
+    # get return code to check if query command is fine
+    return os.system(hdt_query_command)
 
+
+def parse_properties_file(properties_pair_file: str) -> str:
+    """Parse file containing pair of properties we want to generate a dataset from
     Args:
-        result_file (str): _description_
+        Path of properties pair file, <p1>\t<q1>\n<p2>\t<q2>....
 
-    Returns:
-        _type_: _description_
     """
-    code = 0
-    new_res_file = result_file.split(".")[0]+"_clean.json"
-    code += os.system("cp "+result_file+" "+new_res_file)
-    code += os.system("awk 'NR > 3 { print }' < "+new_res_file+" > "+result_file) #remove first 3 lines of the file
-    return code
+    db_wk_pairs = []
+    with open(properties_pair_file, "r", encoding="utf-8") as f:
+        for line in f.readlines():
+            if (splited := line.split("\n") == 2):
+                db_wk_pairs.append((splited[0], splited[1]))
 
-def concat_result_files(result_file : str, output_file : str, var_names : list) -> None:
-    """Concat the json file to the output file
+    return db_wk_pairs
 
-    Args:
-        result_file (str): json file 
-        output_file (str): ttl format file, append at the end of file
-    """
-    
-    e,p,v = var_names
-    f_read = open(result_file, 'r', encoding="UTF-8")
-    f_write = open(output_file, 'a', encoding="UTF-8")
-    for record in ijson.items(f_read, "results.bindings.item"):
-        entity = (f'<{record[e]["value"]}>')
-        prop = (f'<{record[p]["value"]}>')
-        value = (f'{record[v]["value"]}')
-        f_write.write(entity+"\t"+prop+"\t"+value+"\n")
-        
-    f_read.close()
-    f_write.close()
+
+def get_prop_name(prop: str) -> str:
+    return prop.split("/")[-1][0:-1]
+
+
+def get_support(prop: str, entity_list: list[str], database_name: str, output_file_path: str) -> str:
+
+    output_file = "../data/"+output_file_path+"/"+database_name+"-"+get_prop_name(prop)+".json"
+
+    if database_name == "wikidata":
+        # transform <http://www.wikidata.org/prop/P11143> into <http://www.wikidata.org/prop/statement/P11143>
+        prop = "/".join((x := prop.split("/"))[0:-1])+"/statement/"+x[-1]
+
+    sparql_query = """select distinct ?e ?v where {
+        values ?e { """+list_toStr(entity_list)+""" }.
+        bind("""+prop+""" as ?p)
+        ?e ?p ?v.
+        }  
+        """
+
+    query_file = database_name+"-"+get_prop_name(prop)+"_support_query"
+    with open(query_file, "w", encoding="utf-8") as f:
+        f.write(sparql_query)
+
+    return_code = sparql_call(database_name, query_file, output_file)
+    #TODO with return code
+    return output_file
+
+
+def get_sameAs(db_prop_name : str, wk_prop_name : str, support_file : str, database_name : str, output_file_path):
+
+    entities,_ = read_json_file(support_file) #we only get <e,v> files
+
+    output_file = "../data/"+output_file_path+"/"+"db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs.json"
+
+    if database_name == "wikidata":
+        # transform <http://www.wikidata.org/prop/P11143> into <http://www.wikidata.org/prop/statement/P11143>
+        prop = "/".join((x := prop.split("/"))[0:-1])+"/statement/"+x[-1]
+
+
+    sparql_query = """
+        PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+        select distinct ?e ?v  where {
+            values ?e { """+list_toStr(entities)+""" }. 
+            ?e owl:sameAs ?v.
+            FILTER(strstarts(str(?v), 'http://www.wikidata.'))
+        }  
+    """ 
+    #sparql_query 
+    query_file = "db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs_query"
+    with open(query_file, "w", encoding="utf-8") as f:
+        f.write(sparql_query)
+
+    #TODO 
+    return_code = sparql_call(database_name, query_file, output_file)
+    return output_file
 
 
 
