@@ -89,7 +89,7 @@ def parse_properties_file(properties_pair_file: str) -> str:
 
 
 def get_prop_name(prop: str) -> str:
-    return prop.split("/")[-1][0:-1]
+    return prop.strip().split("/")[-1][0:-1]
 
 
 def get_support(prop: str, entity_list: list[str], database_name: str, output_file_path: str, output_file_name : str = "") -> str:
