@@ -31,3 +31,8 @@ python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop
 python3 main.py ../data/dbpedia_sameAs_clean.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata" ~soulard/QueryHDT/SparqlHomemade2.jar
 python3 main.py ../data/prop_.json "<http://www.wikidata.org/prop/statement/P10673>" "wikidata" ~soulard/QueryHDT/SparqlHomemade2.jar
 python3 main.py ../data/prop_releaseDate_support_db.ttl "<http://www.wikidata.org/prop/statement/P10673>" "dbpedia" ~soulard/QueryHDT/SparqlHomemade2.jar &
+
+python3 main.py ../data/properties_pair.txt ../data/dbpedia_sameAs_clean.json &
+
+<http://dbpedia.org/ontology/isbn> <http://www.wikidata.org/prop/P957>
+<http://dbpedia.org/ontology/originalName> <http://www.wikidata.org/prop/P1477>

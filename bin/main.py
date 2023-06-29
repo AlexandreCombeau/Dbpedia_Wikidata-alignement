@@ -11,17 +11,33 @@ def get_dataset(properties_pair_file : str, db_wk_sameAs : str) -> None:
     for db_prop,wk_prop in tuples_properties:
         db_prop_name = get_prop_name(db_prop)
         wk_prop_name = get_prop_name(wk_prop)
+        print(db_prop_name,wk_prop_name)
         file_path = wk_prop_name+"-"+db_prop_name #create sub folder for this dataset
+        
         if os.path.isdir("../data/"+file_path): #if folder already exist we already have the dataset for this pair
             continue
         os.system("mkdir ../data/"+file_path)
-        #get dbpedia e-v
-        db_support_file   = get_support(db_prop,read_json_file(db_wk_sameAs)[0],"dbpedia",file_path)
+        db_entity_list = read_json_file(db_wk_sameAs)[0] #way too big need to split
+
+        sliced_support_file = []
+        #slit list into smaller slice
+        for index,slice_db_list in enumerate(property_list_cutting(db_entity_list,5000)):
+            #query smaller list
+            file_name = "sliced_dbpedia-"+get_prop_name(db_prop_name)+"_"+index
+            db_slice_support_file = get_support(db_prop,slice_db_list,"dbpedia",file_path,output_file_name=file_name) #get dbpedia e-v
+            print(db_entity_list)
+            #store file path
+            sliced_support_file.append(db_slice_support_file)
+
+        #merge all file into one json 
+        db_support_file = merge_JsonFiles(sliced_support_file)
+        print(db_support_file)
         #with the dbpedia e-v we get all <e owl:sameAs wk>
         db_wk_prop_sameAs_file = get_sameAs(db_prop_name,wk_prop_name,db_support_file,"wikidata",file_path)
+        print(db_wk_prop_sameAs_file)
         #we have the wk e now we can fetch the e-v for wikidata
-        wk_support_file   = get_support(wk_prop,read_json_file(db_wk_prop_sameAs_file[1]),"wikidata",file_path)
-
+        wk_support_file = get_support(wk_prop,read_json_file(db_wk_prop_sameAs_file[1]),"wikidata",file_path)
+        print(wk_support_file)
     
 def main():
 

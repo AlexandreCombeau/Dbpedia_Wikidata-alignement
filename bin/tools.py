@@ -19,8 +19,26 @@ def list_toStr(lst: list) -> str:
         str : return a string of the type "list[1] list[2] ... list[n]"
     """
     joined_string = reduce(lambda acc, x: acc+" "+str(x), lst, "")
+
     return joined_string
 
+def property_list_cutting(l: list ,slice_size: int ) -> list[list[str]]:
+    """From a list, return slice 2D with n sublist of size "slice_size"
+
+    Args:
+        l (_type_): huge 1D list
+        slice_size (_type_): 2D list composed of n "slice_size" list
+
+    Returns:
+        list : slice_size
+    """
+    index = 0
+    sliced_list = []
+    if len(l) < slice_size: return l
+    while index<len(l):
+        sliced_list.append(l[index:index+slice_size])
+        index+=slice_size
+    return sliced_list
 
 def read_json_file(file: str) -> list[tuple[set[str], set[str]]]:
     """Return a set of each variable in the json file
@@ -74,9 +92,13 @@ def get_prop_name(prop: str) -> str:
     return prop.split("/")[-1][0:-1]
 
 
-def get_support(prop: str, entity_list: list[str], database_name: str, output_file_path: str) -> str:
+def get_support(prop: str, entity_list: list[str], database_name: str, output_file_path: str, output_file_name : str = "") -> str:
+
 
     output_file = "../data/"+output_file_path+"/"+database_name+"-"+get_prop_name(prop)+".json"
+
+    if output_file_name:
+        output_file = "../data/"+output_file_path+"/"+output_file_name+".json"
 
     if database_name == "wikidata":
         # transform <http://www.wikidata.org/prop/P11143> into <http://www.wikidata.org/prop/statement/P11143>
@@ -89,7 +111,7 @@ def get_support(prop: str, entity_list: list[str], database_name: str, output_fi
         }  
         """
 
-    query_file = database_name+"-"+get_prop_name(prop)+"_support_query"
+    query_file = "../data/"+output_file_path+"/"+database_name+"-"+get_prop_name(prop)+"_support_query"
     with open(query_file, "w", encoding="utf-8") as f:
         f.write(sparql_query)
 
@@ -118,7 +140,7 @@ def get_sameAs(db_prop_name : str, wk_prop_name : str, support_file : str, datab
         }  
     """ 
     #sparql_query 
-    query_file = "db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs_query"
+    query_file = "../data/"+output_file_path+"/"+"db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs_query"
     with open(query_file, "w", encoding="utf-8") as f:
         f.write(sparql_query)
 
@@ -126,5 +148,33 @@ def get_sameAs(db_prop_name : str, wk_prop_name : str, support_file : str, datab
     return_code = sparql_call(database_name, query_file, output_file)
     return output_file
 
+
+def merge_JsonFiles(filename : list[str], output_file_path : str, prop : str) -> None:
+    bindings = list()
+    var = list()
+    vars_flag = True
+    for f1 in filename:
+        if vars_flag:
+            with open(f1, 'r') as f:
+                f_data = json.load(f)
+                var = f_data['head']['vars']
+                vars_flag = False
+
+        with open(f1, 'r') as f:
+            f_data = json.load(f)
+            bindings.extend(f_data['results']['bindings'])
+            
+    # Create the merged JSON object
+    merged_data = {
+        'head': {
+            'vars': var
+        },
+        'results': {
+            'bindings': bindings
+        }
+    }
+    output_file = "../data/"+output_file_path+"/dbpedia-"+get_prop_name(prop)+".json"
+    with open('merged_json.json', 'w') as output_file:
+        json.dump(merged_data, output_file)
 
 
