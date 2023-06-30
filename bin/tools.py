@@ -108,8 +108,9 @@ def get_support(prop: str, entity_list: list[str], database_name: str, output_fi
         values ?e { """+list_toStr(entity_list)+""" }.
         bind("""+prop+""" as ?p)
         ?e ?p ?v.
-        }  
+        }  limit 10000
         """
+    #TODO add limit
 
     query_file = "../data/"+output_file_path+"/"+database_name+"-"+get_prop_name(prop)+"_support_query"
     with open(query_file, "w", encoding="utf-8") as f:
