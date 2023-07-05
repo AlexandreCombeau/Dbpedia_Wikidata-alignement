@@ -36,3 +36,15 @@ python3 main.py ../data/properties_pair.txt ../data/dbpedia_sameAs_clean.json &
 
 <http://dbpedia.org/ontology/isbn> <http://www.wikidata.org/prop/P957>
 <http://dbpedia.org/ontology/originalName> <http://www.wikidata.org/prop/P1477>
+
+ File "/home/combeau/Dbpedia_Wikidata-alignement/bin/main.py", line 81, in <module>
+    main()
+  File "/home/combeau/Dbpedia_Wikidata-alignement/bin/main.py", line 72, in main
+    get_dataset_all_data(properties_pair_file,sameAs_file)
+  File "/home/combeau/Dbpedia_Wikidata-alignement/bin/main.py", line 36, in get_dataset_all_data
+    db_wk_prop_sameAs_file = get_sameAs(db_prop_name,wk_prop_name,db_support_file,"wikidata",file_path)
+  File "/home/combeau/Dbpedia_Wikidata-alignement/bin/tools.py", line 127, in get_sameAs
+    entities,_ = read_json_file(support_file) #we only get <e,v> files
+  File "/home/combeau/Dbpedia_Wikidata-alignement/bin/tools.py", line 48, in read_json_file
+    with open(file, 'r', encoding="UTF-8") as f:
+TypeError: expected str, bytes or os.PathLike object, not NoneType

@@ -1,1 +1,4 @@
 <http://dbpedia.org/ontology/releaseDate> <http://www.wikidata.org/prop/P10673>
+<http://dbpedia.org/ontology/isbn> <http://www.wikidata.org/prop/P957>
+<http://dbpedia.org/ontology/originalName> <http://www.wikidata.org/prop/P1477>
+

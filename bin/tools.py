@@ -5,10 +5,10 @@ from functools import reduce
 
 import ijson
 
-QUERY_SERVICE = "~soulard/QueryHDT/SparqlHomemade2.jar"
+QUERY_SERVICE = "~/../soulard/QueryHDT/SparqlHomemade2.jar"
 DATABASE_PATH = {
-    "dbpedia": "~/soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
-    "wikidata": "~/soulard/Graphs_HDT/Wikidata/Wikidata_final.hdt"
+    "dbpedia": "~/../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
+    "wikidata": "~/../soulard/Graphs_HDT/Wikidata/Wikidata_final.hdt"
 }
 
 
@@ -102,7 +102,8 @@ def get_support(prop: str, entity_list: list[str], database_name: str, output_fi
 
     if database_name == "wikidata":
         # transform <http://www.wikidata.org/prop/P11143> into <http://www.wikidata.org/prop/statement/P11143>
-        prop = "/".join((x := prop.split("/"))[0:-1])+"/statement/"+x[-1]
+        x = prop.split("/")
+        prop = "/".join((x)[0:-1])+"/statement/"+x[-1]
 
     sparql_query = """select distinct ?e ?v where {
         values ?e { """+list_toStr(entity_list)+""" }.
@@ -127,10 +128,6 @@ def get_sameAs(db_prop_name : str, wk_prop_name : str, support_file : str, datab
 
     output_file = "../data/"+output_file_path+"/"+"db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs.json"
 
-    if database_name == "wikidata":
-        # transform <http://www.wikidata.org/prop/P11143> into <http://www.wikidata.org/prop/statement/P11143>
-        prop = "/".join((x := prop.split("/"))[0:-1])+"/statement/"+x[-1]
-
 
     sparql_query = """
         PREFIX owl: <http://www.w3.org/2002/07/owl#> 
@@ -150,18 +147,18 @@ def get_sameAs(db_prop_name : str, wk_prop_name : str, support_file : str, datab
     return output_file
 
 
-def merge_JsonFiles(filename : list[str], output_file_path : str, prop : str) -> None:
+def merge_JsonFiles(filename : list[str], output_file_path : str, prop_name : str) -> None:
     bindings = list()
     var = list()
     vars_flag = True
     for f1 in filename:
         if vars_flag:
-            with open(f1, 'r') as f:
+            with open(f1, 'r', encoding = "utf-8") as f:
                 f_data = json.load(f)
                 var = f_data['head']['vars']
                 vars_flag = False
 
-        with open(f1, 'r') as f:
+        with open(f1, 'r', encoding = "utf-8") as f:
             f_data = json.load(f)
             bindings.extend(f_data['results']['bindings'])
             
@@ -174,8 +171,8 @@ def merge_JsonFiles(filename : list[str], output_file_path : str, prop : str) ->
             'bindings': bindings
         }
     }
-    output_file = "../data/"+output_file_path+"/dbpedia-"+get_prop_name(prop)+".json"
-    with open('merged_json.json', 'w') as output_file:
+    output_file = "../data/"+output_file_path+"/dbpedia-"+prop_name+".json"
+    with open(output_file, 'w',encoding = "utf-8") as output_file:
         json.dump(merged_data, output_file)
 
 
