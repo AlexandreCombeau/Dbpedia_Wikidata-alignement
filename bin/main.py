@@ -38,6 +38,7 @@ def get_dataset_all_data(properties_pair_file : str, db_wk_sameAs : str) -> None
 
         db_wk_prop_sameAs_file = get_sameAs(db_prop_name,wk_prop_name,db_support_file,"wikidata",file_path)
         print(db_wk_prop_sameAs_file)
+        return
         #we have the wk e now we can fetch the e-v for wikidata
         wk_support_file = get_support(wk_prop,read_json_file(db_wk_prop_sameAs_file)[1],"wikidata",file_path)
         print(wk_support_file)

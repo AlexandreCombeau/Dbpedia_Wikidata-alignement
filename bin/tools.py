@@ -123,9 +123,10 @@ def get_support(prop: str, entity_list: list[str], database_name: str, output_fi
 
 
 def get_sameAs(db_prop_name : str, wk_prop_name : str, support_file : str, database_name : str, output_file_path):
-
+    print("support")
     entities,_ = read_json_file(support_file) #we only get <e,v> files
-
+    print(len(entities))
+    return
     output_file = "../data/"+output_file_path+"/"+"db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs.json"
 
 

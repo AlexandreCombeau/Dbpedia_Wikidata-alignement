@@ -48,3 +48,5 @@ python3 main.py ../data/properties_pair.txt ../data/dbpedia_sameAs_clean.json &
   File "/home/combeau/Dbpedia_Wikidata-alignement/bin/tools.py", line 48, in read_json_file
     with open(file, 'r', encoding="UTF-8") as f:
 TypeError: expected str, bytes or os.PathLike object, not NoneType
+
+sameAs marche pas
