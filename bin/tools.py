@@ -18,7 +18,7 @@ def list_toStr(lst: list) -> str:
     Returns:
         str : return a string of the type "list[1] list[2] ... list[n]"
     """
-    joined_string = reduce(lambda acc, x: acc+" "+str(x), lst, "")
+    joined_string = " ".join(lst)#reduce(lambda acc, x: acc+" "+str(x), lst, "")
 
     return joined_string
 
@@ -123,10 +123,8 @@ def get_support(prop: str, entity_list: list[str], database_name: str, output_fi
 
 
 def get_sameAs(db_prop_name : str, wk_prop_name : str, support_file : str, database_name : str, output_file_path):
-    print("support")
     entities,_ = read_json_file(support_file) #we only get <e,v> files
     print(len(entities))
-    return
     output_file = "../data/"+output_file_path+"/"+"db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs.json"
 
 

@@ -49,4 +49,18 @@ python3 main.py ../data/properties_pair.txt ../data/dbpedia_sameAs_clean.json &
     with open(file, 'r', encoding="UTF-8") as f:
 TypeError: expected str, bytes or os.PathLike object, not NoneType
 
+Traceback (most recent call last):
+  File "/home/combeau/Dbpedia_Wikidata-alignement/bin/main.py", line 85, in <module>
+    main()
+  File "/home/combeau/Dbpedia_Wikidata-alignement/bin/main.py", line 76, in main
+    get_dataset_all_data(properties_pair_file,sameAs_file)
+  File "/home/combeau/Dbpedia_Wikidata-alignement/bin/main.py", line 39, in get_dataset_all_data
+    db_wk_prop_sameAs_file = get_sameAs(db_prop_name,wk_prop_name,db_support_file,"dbpedia",file_path)
+  File "/home/combeau/Dbpedia_Wikidata-alignement/bin/tools.py", line 127, in get_sameAs
+    entities,_ = read_json_file(support_file) #we only get <e,v> files
+  File "/home/combeau/Dbpedia_Wikidata-alignement/bin/tools.py", line 48, in read_json_file
+    with open(file, 'r', encoding="UTF-8") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '../data/../data/P957_isbn/sliced_dbpedia-isbn_657.json/dbpedia-isbn.json'
+
+request wikidata does not work
 sameAs marche pas

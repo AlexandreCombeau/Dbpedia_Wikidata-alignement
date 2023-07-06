@@ -16,10 +16,11 @@ def get_dataset_all_data(properties_pair_file : str, db_wk_sameAs : str) -> None
             #continue
             os.system("mkdir ../data/"+file_path)
         
-        #slit list into smaller slice
-        if not(os.path.isfile("../data/"+file_path+"/dbpedia-"+db_prop_name+".json")):
+        db_support_file = "../data/"+file_path+"/dbpedia-"+db_prop_name+".json"
+        if not(os.path.isfile(db_support_file)):
             db_entity_list = list(read_json_file(db_wk_sameAs)[0])
             sliced_support_file = []
+            #slice list into smaller slice
             for index,slice_db_list in enumerate(property_list_cutting(db_entity_list,5000)):
                 #query smaller list
                 file_name = "sliced_dbpedia-"+db_prop_name+"_"+str(index)
@@ -34,13 +35,15 @@ def get_dataset_all_data(properties_pair_file : str, db_wk_sameAs : str) -> None
             for file_path in sliced_support_file:
                 os.system("rm "+file_path)
         #with the dbpedia e-v we get all <e owl:sameAs wk>
-        db_support_file = "../data/"+file_path+"/dbpedia-"+db_prop_name+".json"
-
-        db_wk_prop_sameAs_file = get_sameAs(db_prop_name,wk_prop_name,db_support_file,"wikidata",file_path)
+        
+        db_wk_prop_sameAs_file = "../data/"+file_path+"/"+"db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs.json"
+        if not(os.path.isfile(db_wk_prop_sameAs_file)):
+            db_wk_prop_sameAs_file = get_sameAs(db_prop_name,wk_prop_name,db_support_file,"dbpedia",file_path)
         print(db_wk_prop_sameAs_file)
-        return
+        
         #we have the wk e now we can fetch the e-v for wikidata
-        wk_support_file = get_support(wk_prop,read_json_file(db_wk_prop_sameAs_file)[1],"wikidata",file_path)
+        wk_entity_list = read_json_file(db_wk_prop_sameAs_file)[1]
+        wk_support_file = get_support(wk_prop,wk_entity_list,"wikidata",file_path)
         print(wk_support_file)
     
 
