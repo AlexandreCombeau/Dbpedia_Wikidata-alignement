@@ -17,7 +17,7 @@ def get_dataset_all_data(properties_pair_file : str, db_wk_sameAs : str) -> None
             os.system("mkdir ../data/"+file_path)
         
         db_support_file = "../data/"+file_path+"/dbpedia-"+db_prop_name+".json"
-        if not(os.path.isfile(db_support_file)):
+        if not(os.path.isfile(db_support_file)) and is_file_empty(db_support_file):
             db_entity_list = list(read_json_file(db_wk_sameAs)[0])
             sliced_support_file = []
             #slice list into smaller slice
@@ -37,7 +37,9 @@ def get_dataset_all_data(properties_pair_file : str, db_wk_sameAs : str) -> None
         #with the dbpedia e-v we get all <e owl:sameAs wk>
         
         db_wk_prop_sameAs_file = "../data/"+file_path+"/"+"db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs.json"
-        if not(os.path.isfile(db_wk_prop_sameAs_file)):
+        
+        if not(os.path.isfile(db_wk_prop_sameAs_file)) and is_file_empty(db_wk_prop_sameAs_file) :
+            return
             db_wk_prop_sameAs_file = get_sameAs(db_prop_name,wk_prop_name,db_support_file,"dbpedia",file_path)
         print(db_wk_prop_sameAs_file)
         

@@ -2,15 +2,21 @@ import json
 import os
 import typing
 from functools import reduce
+import sys
+import pathlib
 
 import ijson
-
 QUERY_SERVICE = "~/../soulard/QueryHDT/SparqlHomemade2.jar"
 DATABASE_PATH = {
     "dbpedia": "~/../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
     "wikidata": "~/../soulard/Graphs_HDT/Wikidata/Wikidata_final.hdt"
 }
 
+def is_file_empty(file_path : str) -> bool:
+
+    path = pathlib.Path(file_path)
+    f_size = path.stat().st_size
+    return f_size > 500
 
 def list_toStr(lst: list) -> str:
     """From a list return a string composed of all element of the list joined
