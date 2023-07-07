@@ -16,7 +16,7 @@ def is_file_empty(file_path : str) -> bool:
 
     path = pathlib.Path(file_path)
     f_size = path.stat().st_size
-    return f_size > 500
+    return f_size < 500
 
 def list_toStr(lst: list) -> str:
     """From a list return a string composed of all element of the list joined
@@ -108,32 +108,36 @@ def get_support(prop: str, entity_list: list[str], database_name: str, output_fi
 
     if database_name == "wikidata":
         # transform <http://www.wikidata.org/prop/P11143> into <http://www.wikidata.org/prop/statement/P11143>
-        x = prop.split("/")
-        prop = "/".join((x)[0:-1])+"/statement/"+x[-1]
-
-    sparql_query = """select distinct ?e ?v where {
-        values ?e { """+list_toStr(entity_list)+""" }.
-        bind("""+prop+""" as ?p)
-        ?e ?p ?v.
-        }  limit 10000
-        """
-    #TODO add limit
+        sparql_query = """
+        PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+        select distinct ?e ?v where {
+            values ?e { """+list_toStr(list(entity_list))+""" }.
+            ?e wdt:"""+get_prop_name(prop)+""" ?v.
+            }
+            """
+    else:
+        sparql_query = """select distinct ?e ?v where {
+            values ?e { """+list_toStr(list(entity_list))+""" }.
+            bind( """+prop+""" as ?p)
+            ?e ?p ?v.
+            }  
+            """
 
     query_file = "../data/"+output_file_path+"/"+database_name+"-"+get_prop_name(prop)+"_support_query"
     with open(query_file, "w", encoding="utf-8") as f:
         f.write(sparql_query)
 
     return_code = sparql_call(database_name, query_file, output_file)
+    print("return code :",return_code)
     #TODO with return code
     return output_file
 
 
 def get_sameAs(db_prop_name : str, wk_prop_name : str, support_file : str, database_name : str, output_file_path):
     entities,_ = read_json_file(support_file) #we only get <e,v> files
-    print(len(entities))
+
     output_file = "../data/"+output_file_path+"/"+"db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs.json"
-
-
+    
     sparql_query = """
         PREFIX owl: <http://www.w3.org/2002/07/owl#> 
         select distinct ?e ?v  where {
@@ -147,7 +151,6 @@ def get_sameAs(db_prop_name : str, wk_prop_name : str, support_file : str, datab
     with open(query_file, "w", encoding="utf-8") as f:
         f.write(sparql_query)
 
-    #TODO 
     return_code = sparql_call(database_name, query_file, output_file)
     return output_file
 
