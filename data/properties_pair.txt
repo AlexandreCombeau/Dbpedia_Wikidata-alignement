@@ -2,3 +2,5 @@
 <http://dbpedia.org/ontology/isbn> <http://www.wikidata.org/prop/P957>
 <http://dbpedia.org/ontology/originalName> <http://www.wikidata.org/prop/P1477>
 
+
+
