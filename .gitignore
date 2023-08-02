@@ -1,3 +1,13 @@
 # Ignorer tous les fichiers .json
 *.json
 
+data/prop_releaseDate_support_db.ttl
+data/P1477_originalName/db-originalName_wk-P1477_sameAs_query
+data/P1477_originalName/dbpedia-originalName_support_query
+data/P1477_originalName/wikidata-P1477_support_query
+data/P577_releaseDate/db-releaseDate_wk-P577_sameAs_query
+data/P577_releaseDate/dbpedia-releaseDate_support_query
+data/P577_releaseDate/wikidata-P577_support_query
+data/P957_isbn/db-isbn_wk-P957_sameAs_query
+data/P957_isbn/dbpedia-isbn_support_query
+data/P957_isbn/wikidata-P957_support_query

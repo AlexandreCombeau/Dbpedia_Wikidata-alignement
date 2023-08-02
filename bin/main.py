@@ -1,5 +1,6 @@
 import sys
 import re 
+import subprocess
 from tools import *
 
 def get_dataset_all_data(properties_pair_file : str, db_wk_sameAs : str) -> None:
@@ -14,7 +15,7 @@ def get_dataset_all_data(properties_pair_file : str, db_wk_sameAs : str) -> None
 
         if not(os.path.isdir("../data/"+file_path)): #if folder already exist we already have the dataset for this pair
             #continue
-            os.system("mkdir ../data/"+file_path)
+            subprocess.Popen(["mkdir ", "../data/"+file_path])#TODO add subprocess instead of system
         
         db_support_file = "../data/"+file_path+"/dbpedia-"+db_prop_name+".json"
         if not(os.path.isfile(db_support_file)) or is_file_empty(db_support_file):
@@ -32,7 +33,7 @@ def get_dataset_all_data(properties_pair_file : str, db_wk_sameAs : str) -> None
             db_support_file = merge_JsonFiles(sliced_support_file,file_path,db_prop_name)
             print(db_support_file)
             for file_path in sliced_support_file:
-                os.system("rm "+file_path)
+                subprocess.Popen(["rm ",file_path])
         #with the dbpedia e-v we get all <e owl:sameAs wk>
         
         db_wk_prop_sameAs_file = "../data/"+file_path+"/"+"db-"+db_prop_name+"_wk-"+wk_prop_name+"_sameAs.json"
@@ -66,7 +67,7 @@ def get_dataset(properties_pair_file : str, db_wk_sameAs : str) -> None:
 
         if os.path.isdir("../data/"+file_path): #if folder already exist we already have the dataset for this pair
             continue
-        os.system("mkdir ../data/"+file_path)
+        subprocess.Popen(["mkdir ", "../data/"+file_path])
         db_entity_list = list(read_json_file(db_wk_sameAs)[0])[0:10000] #way too big need to split
 
 

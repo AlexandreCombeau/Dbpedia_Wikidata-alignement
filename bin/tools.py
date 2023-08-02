@@ -4,8 +4,9 @@ import typing
 from functools import reduce
 import sys
 import pathlib
-
+import subprocess
 import ijson
+
 QUERY_SERVICE = "~/../soulard/QueryHDT/SparqlHomemade2.jar"
 DATABASE_PATH = {
     "dbpedia": "~/../soulard/Graphs_HDT/DBpedia/DBpedia_en.hdt",
@@ -73,11 +74,12 @@ def sparql_call(database: str, query_file: str, output_file: str) -> int:
     #jar_path = "~/../soulard/QueryHDT/SparqlToJSON.jar"
 
     # call with sparql to get all entities for a specific property
-    hdt_query_command = "java -Xmx50G -Xms50G -jar "+QUERY_SERVICE + \
-        " "+DATABASE_PATH[database]+" "+query_file+" "+output_file
+    #hdt_query_command = "java -Xmx50G -Xms50G -jar "+QUERY_SERVICE + \
+    #    " "+DATABASE_PATH[database]+" "+query_file+" "+output_file
+    hdt_query_command = ["java", "-Xmx50G", "-Xms50G" ,"-jar", QUERY_SERVICE, DATABASE_PATH[database], query_file, output_file]
     # get return code to check if query command is fine
-    return os.system(hdt_query_command)
-
+    #return os.system(hdt_query_command)
+    return subprocess.Popen(hdt_query_command)
 
 def parse_properties_file(properties_pair_file: str) -> str:
     """Parse file containing pair of properties we want to generate a dataset from
